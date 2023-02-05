@@ -1,0 +1,25 @@
+{
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 800,
+    "files.trimTrailingWhitespace": true,
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
+    "python.formatting.provider": "black",
+    "python.linting.mypyEnabled": false,
+    "python.linting.lintOnSave": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        // "--ignore=W293, W503, W504, E402, F403, E203",
+        "--max-line-length=300",
+        "--max-complexity=20"
+    ],
+    "[python]": {
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": true,
+        "editor.tabSize": 4,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    }
+}

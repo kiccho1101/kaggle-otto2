@@ -1,0 +1,527 @@
+seed: 77
+sampling_ratio: 0.05
+
+catboost_params:
+  target_click:
+    loss_function: Logloss
+    # loss_function: YetiRank
+    learning_rate: 0.02
+    max_depth: 6
+    random_state: 77
+    thread_count: 2
+    task_type: GPU
+    scale_pos_weight: 100
+    num_boost_round: 100000
+  target_cart:
+    loss_function: Logloss
+    # loss_function: YetiRank
+    learning_rate: 0.02
+    max_depth: 4
+    random_state: 77
+    thread_count: 2
+    task_type: GPU
+    scale_pos_weight: 300
+    num_boost_round: 30000
+  target_order:
+    loss_function: Logloss
+    # loss_function: YetiRank
+    learning_rate: 0.02
+    max_depth: 4
+    random_state: 77
+    thread_count: 2
+    task_type: GPU
+    scale_pos_weight: 300
+    num_boost_round: 30000
+
+other_config:
+  cand_merger:
+    click_cand_topk: 150
+    cart_cand_topk: 150
+    order_cand_topk: 150
+  co_vis_click:
+    aid_split_num: 10
+    click_pair_topk: 20
+    cart_pair_topk: 20
+    order_pair_topk: 20
+    click_gen_cand_topk: 30
+    cart_gen_cand_topk: 30
+    order_gen_cand_topk: 30
+  co_vis_buy:
+    aid_split_num: 10
+    click_pair_topk: 40
+    cart_pair_topk: 40
+    order_pair_topk: 40
+    click_gen_cand_topk: 30
+    cart_gen_cand_topk: 60
+    order_gen_cand_topk: 60
+  item_mf:
+    n_epochs: 25
+    n_factors: 256
+    lr: 0.3
+    train_batch_size: 131072
+    gen_cand_topk: 40
+  item_mf004_item_seq:
+    gen_cand_topk: 40
+    cg_weight: 1.2
+  user_mf:
+    n_epochs: 100
+    n_factors: 256
+    lr: 0.01
+    train_batch_size: 131072
+    gen_cand_topk: 40
+    event_threshold: 20
+  gru4rec:
+    n_epochs: 10
+    n_factors: 128
+    hidden_size: 128
+    lr: 0.01
+    train_batch_size: 8192
+    num_layers: 1
+    dropout: 0.0
+    max_seq: 9
+    gen_cand_topk: 30
+  co_vis_time_weighted:
+    co_type: time_weighted
+    pair_topk: 20
+    gen_cand_topk: 30
+  co_vis_type_weighted:
+    co_type: type_weighted
+    pair_topk: 15
+    gen_cand_topk: 30
+  co_vis_buy_to_buy:
+    co_type: buy_to_buy
+    pair_topk: 15
+    gen_cand_topk: 30
+  item2vec:
+    lr: 0.05
+    window: 5
+    vector_size: 100
+    sg: 1
+    epochs: 5
+    seed: 77
+    negative: 30
+    min_count: 1
+    gen_cand_topk: 30
+
+features:
+  # Candidate Features
+  - cand_feature_selected_score
+  - cand_feature_selected_num
+  - cand_feature_selected_rank
+  - cand_feature_selected_min_rank
+  # - cand_score_rank_mean
+  # - cand_score_rank_min
+  # - item_mf_last_all_score
+  # - user_mf_all_score
+
+  # - last_inter_score_aid_mean
+  # - last_inter_score_aid_mean_diff
+  # - last_inter_score_session_mean_diff
+  - last_inter_score
+  - last_click_score
+  - last_cart_score
+  - last_order_score
+  - last_inter_score_selected
+  - last_click_score_selected
+  - last_cart_score_selected
+  - last_order_score_selected
+  - last_inter_score_rank
+  - last_click_score_rank
+  - last_cart_score_rank
+  - last_order_score_rank
+  - co_vis_time_weighted_score
+  # - co_vis_time_weighted_score_aid_mean
+  # - co_vis_time_weighted_score_session_mean_diff
+  # - co_vis_time_weighted_score_aid_mean_diff
+  - co_vis_type_weighted_score
+  # - co_vis_buy_to_buy_score_aid_mean
+  # - co_vis_buy_to_buy_score_session_mean_diff
+  # - co_vis_buy_to_buy_score_aid_mean_diff
+  - co_vis_buy_to_buy_score
+  - co_vis_time_weighted_score_selected
+  - co_vis_type_weighted_score_selected
+  - co_vis_buy_to_buy_score_selected
+  - co_vis_buy_to_buy_score_rank
+  - co_vis_time_weighted_score_rank
+  - co_vis_type_weighted_score_rank
+  # - item2vec_last_score_aid_mean
+  # - item2vec_last_score_session_mean_diff
+  # - item2vec_last_score_aid_mean_diff
+  - item2vec_last_score
+  - item2vec_last_score_selected
+  - item2vec_last_score_rank
+  - item2vec_seq_score
+  - item2vec_seq_score_selected
+  - item2vec_seq_score_rank
+  - item_mf_last_score
+  - item_mf_last_score_selected
+  - item_mf_last_score_rank
+  - item_mf_item_seq_score_aid_mean
+  - item_mf_item_seq_score_session_mean_diff
+  - item_mf_item_seq_score_aid_mean_diff
+  - item_mf_item_seq_score
+  - item_mf_item_seq_score_selected
+  - item_mf_item_seq_score_rank
+  - user_mf004_sample_sessions_score_aid_mean
+  - user_mf004_sample_sessions_score_session_mean_diff
+  - user_mf004_sample_sessions_score_aid_mean_diff
+  - user_mf004_sample_sessions_score
+  - user_mf004_sample_sessions_score_selected
+  - user_mf004_sample_sessions_score_rank
+
+  # - co_vis_s0_t012_score
+  # - co_vis_s0_t012_score_selected
+  # - co_vis_s0_t012_score_rank
+  # - co_vis_s12_t012_score
+  # - co_vis_s12_t012_score_selected
+  # - co_vis_s12_t012_score_rank
+
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_aid_mean
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_session_mean_diff
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_aid_mean_diff
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s012_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s12_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s0_t12_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s0_t0_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s0_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_selected
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_sum_score_rank
+  # - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score
+  # - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_selected
+  # - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_mean_score_rank
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_selected
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_max_score_rank
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_selected
+  - item_cf_s12_t012_apTrue_tdTrue_trFalse_iifTrue_fFalse_last_score_rank
+
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score_selected
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score_rank
+  # # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score
+  # # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score_selected
+  # # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score_rank
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score_selected
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score_rank
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score_selected
+  # - item_cf_s012_t012_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score_rank
+
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score_selected
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_sum_score_rank
+  # # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score
+  # # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score_selected
+  # # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_mean_score_rank
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score_selected
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_max_score_rank
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score_selected
+  # - item_cf_s12_t12_apTrue_tdTrue_trTrue_iifTrue_fTrue_last_score_rank
+
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_sum_score
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_sum_score_selected
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_sum_score_rank
+  # # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_mean_score
+  # # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_mean_score_selected
+  # # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_mean_score_rank
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_max_score
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_max_score_selected
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_max_score_rank
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_last_score
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_last_score_selected
+  # - item_cf_s012_t012_apFalse_tdTrue_trTrue_iifTrue_fFalse_last_score_rank
+
+  # UserCF
+  # - user_cf_s012_t012_score_aid_mean
+  # - user_cf_s012_t012_score_session_mean_diff
+  # - user_cf_s012_t012_score_aid_mean_diff
+  # - user_cf_s012_t012_score
+  # - user_cf_s012_t012_score_selected
+  # - user_cf_s012_t012_score_rank
+
+  # # UserCFTrain
+  # - user_cf_s012_t012_train_score
+  # - user_cf_s012_t012_train_score_selected
+  # - user_cf_s012_t012_train_score_rank
+
+  # UserMFCFTrain
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score_aid_mean
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score_session_mean_diff
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score_aid_mean_diff
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score_selected
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_train_score_rank
+
+  # UserMFCF
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_score
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_score_selected
+  - user_mf_cf_s012_t012_scTrue_acTrue_trTrue_n20_score_rank
+
+  # - item_cf_s02_t1_score
+  # - item_cf_s02_t1_score_selected
+  # - item_cf_s02_t1_score_rank
+  # - item_cf_s01_t2_score
+  # - item_cf_s01_t2_score_selected
+  # - item_cf_s01_t2_score_rank
+  # - item_cf_s12_t0_score
+  # - item_cf_s12_t0_score_selected
+  # - item_cf_s12_t0_score_rank
+  # - implicit_mf_score
+  # - implicit_mf_score_selected
+  # - implicit_mf_score_rank
+  # - co_vis_click_score_selected
+  # - co_vis_buy_score_selected
+  # - co_vis_click_score
+  # - co_vis_buy_score
+  # - co_vis_click_score_rank
+  # - co_vis_buy_score_rank
+  # - itemmf_cluster_pop10_last1days_score_rank
+  # - itemmf_cluster_pop10_last3days_score_rank
+  # - itemmf_cluster_pop10_last7days_score_rank
+  # - itemmf_cluster_pop10_last14days_score_rank
+  # - itemmf_cluster_pop100_last1days_score_rank
+  # - itemmf_cluster_pop100_last3days_score_rank
+  # - itemmf_cluster_pop100_last7days_score_rank
+  # - itemmf_cluster_pop100_last14days_score_rank
+  # # - itemmf_cluster_pop1000_last1days_score_rank
+  # # - itemmf_cluster_pop1000_last3days_score_rank
+  # - itemmf_cluster_pop1000_last7days_score_rank
+  # - itemmf_cluster_pop1000_last14days_score_rank
+  # # - itemmf_cluster_pop10000_last1days_score_rank
+  # # - itemmf_cluster_pop10000_last3days_score_rank
+  # - itemmf_cluster_pop10000_last7days_score_rank
+  # - itemmf_cluster_pop10000_last14days_score_rank
+  # # - top_110000_ease_score
+  # # - top_110000_ease_score_selected
+  # # - top_110000_ease_score_rank
+
+  # - bpr_score
+  # - bpr_score_selected
+  # - bpr_score_rank
+  # - implicit_mf_score
+  # - implicit_mf_score_selected
+  # - implicit_mf_score_rank
+
+  # User Features
+  - user_first_inter_dow
+  - user_first_click_dow
+  - user_first_cart_dow
+  - user_first_order_dow
+  - user_last_inter_dow
+  - user_last_click_dow
+  - user_last_cart_dow
+  - user_last_order_dow
+  - user_inter_num
+  - user_click_num
+  - user_cart_num
+  - user_order_num
+  - user_inter_ts_diff_min
+  - user_inter_ts_diff_mean
+  - user_inter_ts_diff_std
+  - user_inter_ts_diff_max
+  - user_click_ts_diff_min
+  - user_click_ts_diff_mean
+  - user_click_ts_diff_std
+  - user_click_ts_diff_max
+  - user_cart_ts_diff_min
+  - user_cart_ts_diff_mean
+  - user_cart_ts_diff_std
+  - user_cart_ts_diff_max
+  - user_order_ts_diff_min
+  - user_order_ts_diff_mean
+  - user_order_ts_diff_std
+  - user_order_ts_diff_max
+  - user_inter_ts_hour_mean
+  - user_click_ts_hour_mean
+  - user_cart_ts_hour_mean
+  - user_order_ts_hour_mean
+  - user_ts_diff
+  - user_min_all_min_ts_diff
+  - user_max_all_min_ts_diff
+  - user_min_all_max_ts_diff
+  - user_max_all_max_ts_diff
+  - user_inter_ts_mean
+  - user_inter_ts_min
+  - user_inter_ts_max
+  - user_inter_ts_std
+
+  # User Item Features
+  - user_item_first_inter_rank
+  - user_item_first_click_rank
+  - user_item_first_cart_rank
+  - user_item_first_order_rank
+  - user_item_last_inter_rank
+  - user_item_last_click_rank
+  - user_item_last_cart_rank
+  - user_item_last_order_rank
+  - user_item_is_first_inter
+  - user_item_is_last_inter
+  - user_item_is_first_click
+  - user_item_is_last_click
+  - user_item_is_first_cart
+  - user_item_is_last_cart
+  - user_item_is_first_order
+  - user_item_is_last_order
+  # - user_item_itemmf_cluster_10_inter_num
+  # - user_item_itemmf_cluster_10_click_num
+  # - user_item_itemmf_cluster_10_cart_num
+  # - user_item_itemmf_cluster_10_order_num
+  # - user_item_itemmf_cluster_100_inter_num
+  # - user_item_itemmf_cluster_100_click_num
+  # - user_item_itemmf_cluster_100_cart_num
+  # - user_item_itemmf_cluster_100_order_num
+  # - user_item_itemmf_cluster_1000_inter_num
+  # - user_item_itemmf_cluster_1000_click_num
+  # - user_item_itemmf_cluster_1000_cart_num
+  # - user_item_itemmf_cluster_1000_order_num
+  # - user_item_itemmf_cluster_10000_inter_num
+  # - user_item_itemmf_cluster_10000_click_num
+  # - user_item_itemmf_cluster_10000_cart_num
+  # - user_item_itemmf_cluster_10000_order_num
+
+  # Item Features
+  - item_inter_num_3d
+  - item_click_num_3d
+  - item_cart_num_3d
+  - item_order_num_3d
+  - item_inter_num_7d
+  - item_click_num_7d
+  - item_cart_num_7d
+  - item_order_num_7d
+  - item_inter_num_14d
+  - item_click_num_14d
+  - item_cart_num_14d
+  - item_order_num_14d
+  - item_inter_num_21d
+  - item_click_num_21d
+  - item_cart_num_21d
+  - item_order_num_21d
+  # - item_buy_num_3d
+  # - item_buy_num_7d
+  # - item_buy_num_14d
+  # - item_buy_num_21d
+  # - item_inter_rank_3d
+  # - item_click_rank_3d
+  # - item_cart_rank_3d
+  # - item_order_rank_3d
+  # - item_inter_rank_7d
+  # - item_click_rank_7d
+  # - item_cart_rank_7d
+  # - item_order_rank_7d
+  # - item_inter_rank_14d
+  # - item_click_rank_14d
+  # - item_cart_rank_14d
+  # - item_order_rank_14d
+  # - item_inter_rank_21d
+  # - item_click_rank_21d
+  # - item_cart_rank_21d
+  # - item_order_rank_21d
+  # - item_click_to_order_prob_3d
+  # - item_click_to_order_prob_7d
+  # - item_click_to_order_prob_14d
+  - item_click_to_order_prob_21d
+  # - item_click_to_cart_prob_3d
+  # - item_click_to_cart_prob_7d
+  # - item_click_to_cart_prob_14d
+  - item_click_to_cart_prob_21d
+  # - item_cart_to_order_prob_3d
+  # - item_cart_to_order_prob_7d
+  # - item_cart_to_order_prob_14d
+  - item_cart_to_order_prob_21d
+  # - item_itemmf_cluster_num_10
+  # - item_itemmf_cluster_num_100
+  # - item_itemmf_cluster_num_1000
+  # - item_itemmf_cluster_num_10000
+  - item_multi_inter_prob
+  - item_multi_click_prob
+  - item_multi_cart_prob
+  - item_multi_order_prob
+  - item_inter_ts_mean
+  - item_inter_ts_min
+  - item_inter_ts_max
+  - item_inter_ts_std
+
+lgb_params:
+  objective: lambdarank
+  metric: ndcg
+  eval_at:
+    - 1
+  verbosity: -1
+  boosting: gbdt
+  is_unbalance: True
+  seed: 77
+  learning_rate: 0.05
+  colsample_bytree: 0.5
+  subsample_freq: 3
+  subsample: 0.9
+  n_estimators: 1000
+  importance_type: gain
+  reg_lambda: 1.5
+  reg_alpha: 0.1
+  max_depth: 6
+  num_leaves: 45

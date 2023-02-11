@@ -49,9 +49,9 @@ def main(exp: str):
         ItemMFCandGenerator(*[*common_params, "seq"]),
         # UserMF
         UserMFCandGenerator(*common_params),
-        # # Item2Vec
-        # Item2VecCandGenerator(*[*common_params, "last"]),
-        # Item2VecCandGenerator(*[*common_params, "seq"]),
+        # Item2Vec
+        Item2VecCandGenerator(*[*common_params, "last"]),
+        Item2VecCandGenerator(*[*common_params, "seq"]),
     ]
     cand_merger = CandMerger(config.dir_config.exp_output_dir, config, data_loader)
     cand_merger.merge(cand_generators)

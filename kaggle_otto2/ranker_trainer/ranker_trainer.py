@@ -13,8 +13,8 @@ from kaggle_otto2.cand_merger import NegSampler
 from kaggle_otto2.config import Config
 from kaggle_otto2.data_loader import OttoDataLoader
 from kaggle_otto2.feature import FeatureMerger
-from kaggle_otto2.ranker.enums import RankerType
-from kaggle_otto2.util import TimeUtil
+from kaggle_otto2.ranker_trainer.enums import ModelType
+from kaggle_otto2.util import EvaluateUtil, TimeUtil
 
 
 class RankerTrainer:
@@ -25,7 +25,7 @@ class RankerTrainer:
         feature_merger: FeatureMerger,
         neg_sampler: NegSampler,
         config: Config,
-        model_type: RankerType,
+        model_type: ModelType,
     ):
         self.output_dir = output_dir
         self.data_loader = data_loader
@@ -44,7 +44,7 @@ class RankerTrainer:
             "target_cart",
             "target_order",
         ],
-    ) -> Dict[str, pd.DataFrame]:
+    ):
         pred_score_dict = {}
         if self.model_type == "xgb":
             targets = [
@@ -52,10 +52,16 @@ class RankerTrainer:
             ]
         for target_col in targets:
             pred_score_dict[target_col] = self.fit_target(target_col, features)
-        if self.config.is_dev:
+        if self.config.is_cv:
             pred_dfs = self.get_pred_dfs(pred_score_dict)
-            return pred_dfs
-        return {}
+            score, scores, _ = EvaluateUtil.calc_score(
+                self.data_loader.get_test_labels(),
+                pred_dfs,
+                topk=20,
+                verbose=True,
+            )
+            print(score)
+            print(scores)
 
     def fit_target(
         self,
@@ -139,7 +145,7 @@ class RankerTrainer:
 
     def get_pred_dfs(
         self, pred_score_dict: Dict[str, np.ndarray]
-    ) -> Dict[str, pd.DataFrame]:
+    ) -> Dict[str, pl.DataFrame]:
         pred_dfs = {}
         for target_col in pred_score_dict.keys():
             # Result to DataFrame
@@ -170,7 +176,7 @@ class RankerTrainer:
             )
             pred_df.to_parquet(self.output_dir / f"pred_{target_col}.parquet")
             pred_df["y_pred"] = pred_df["y_pred"].map(lambda x: x[:20])
-            pred_dfs[target_col] = pred_df
+            pred_dfs[target_col] = pl.DataFrame(pred_df)
         return pred_dfs
 
     def train_lgb(self, train_df, valid_df, pred_valid_df, fold, target_col, features):
@@ -470,9 +476,7 @@ class RankerTrainer:
         return (
             self.filter_by_train_fold(
                 self.add_targets(
-                    self.filter_no_target_rows(
-                        self.neg_sampler.scan(), target_col
-                    )
+                    self.filter_no_target_rows(self.neg_sampler.scan(), target_col)
                 ),
                 fold,
             )
@@ -486,9 +490,7 @@ class RankerTrainer:
         if self.config.is_dev:
             return (
                 self.add_targets(
-                    self.filter_no_target_rows(
-                        self.feature_merger.scan(), target_col
-                    )
+                    self.filter_no_target_rows(self.feature_merger.scan(), target_col)
                 )
                 .filter(pl.col("fold") == fold)
                 .sort("session")
@@ -501,9 +503,7 @@ class RankerTrainer:
     def get_neg_valid_df(self, target_col, fold, cols) -> pd.DataFrame:
         return (
             self.add_targets(
-                self.filter_no_target_rows(
-                    self.neg_sampler.scan(), target_col
-                )
+                self.filter_no_target_rows(self.neg_sampler.scan(), target_col)
             )
             .filter(pl.col("fold") == fold)
             .sort("session")

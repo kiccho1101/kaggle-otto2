@@ -22,12 +22,12 @@ def main(exp: str):
         [[1, 2], [0, 1, 2], True, True, True, True, True],
         [[0, 1, 2], [0, 1, 2], False, True, True, True, False],
     ]
-    for param in params:
-        agg_method = "sum"
-        cg = ItemCFCandGenerator(
-            config.dir_config.exp_output_dir, data_loader, config, agg_method, *param
-        )
-        cg.fit()
+    # for param in params:
+    #     agg_method = "sum"
+    #     cg = ItemCFCandGenerator(
+    #         config.dir_config.exp_output_dir, data_loader, config, agg_method, *param
+    #     )
+    #     cg.fit()
 
     for param in params:
         for agg_method in ["sum", "mean", "max", "last", "count"]:

@@ -12,7 +12,7 @@ def main(exp: str):
     data_loader = OttoDataLoader(config)
 
     cg = UserMFCandGenerator(config.dir_config.exp_output_dir, config, data_loader)
-    cg.fit()
+    # cg.fit()
     cg.gen_cand_df()
     cg.calc_score()
 

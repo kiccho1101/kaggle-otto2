@@ -4,10 +4,10 @@ pp:
   sampling_ratio: 0.05
 cg:
   item_mf:
-    n_epochs: 15
+    n_epochs: 20
     n_factors: 256
-    lr: 0.1
-    train_batch_size: 262144
+    lr: 0.3
+    train_batch_size: 131072
   item_mf_last:
     gen_cand_topk: 40
   item_mf_seq:
@@ -16,20 +16,19 @@ cg:
     n_epochs: 100
     n_factors: 256
     lr: 0.01
-    train_batch_size: 262144
+    train_batch_size: 131072
     user_min_inters: 20
     gen_cand_topk: 40
   item2vec:
-    lr: 0.05
-    window: 5
-    vector_size: 100
+    lr: 0.1
+    window: 15
+    vector_size: 32
     sg: 1
-    epochs: 5
+    epochs: 10
     seed: 77
-    negative: 30
+    negative: 20
     min_count: 1
-    gen_cand_topk: 20
-    cg_weight: 1.2
+    gen_cand_topk: 30
 ranker:
   features:
   - last_inter_score_selected

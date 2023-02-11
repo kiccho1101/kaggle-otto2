@@ -69,6 +69,7 @@ class Item2VecTrainer:
 
         embeddings = item2vec.wv.vectors
         idx2aid = item2vec.wv.index_to_key
+        aid2idx = {int(aid): idx for idx, aid in enumerate(idx2aid)}
 
         with TimeUtil.timer("prepare data"):
             if seed_type == "seq":
@@ -81,6 +82,12 @@ class Item2VecTrainer:
                     test_aids_df = (
                         self.data_loader.get_test_df()
                         .sort(["session", "ts"], reverse=[False, True])
+                        .with_columns(
+                            pl.col("aid")
+                            .apply(lambda x: aid2idx[x])
+                            .cast(pl.Int32)
+                            .alias("aid_idx")
+                        )
                         .join(self.data_loader.get_aid_idx_df(), on="aid")
                         .groupby("session")
                         .agg(pl.col("aid_idx"))
@@ -121,7 +128,12 @@ class Item2VecTrainer:
                     .sort(["session", "ts"], reverse=[False, True])
                     .groupby("session")
                     .head(1)  # Get last item in test session
-                    .join(self.data_loader.get_aid_idx_df(), on="aid")
+                    .with_columns(
+                        pl.col("aid")
+                        .apply(lambda x: aid2idx[x])
+                        .cast(pl.Int32)
+                        .alias("aid_idx")
+                    )
                     .select(["session", "aid_idx"])
                 )
                 query_vectors = embeddings[test_aids_df["aid_idx"].to_list()]

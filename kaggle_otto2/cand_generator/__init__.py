@@ -1,3 +1,6 @@
 from kaggle_otto2.cand_generator.base.cand_generator_base import CandGeneratorBase
+from kaggle_otto2.cand_generator.item2vec.cand_generator import Item2VecCandGenerator
 from kaggle_otto2.cand_generator.item_cf.cand_generator import ItemCFCandGenerator
+from kaggle_otto2.cand_generator.item_mf.cand_generator import ItemMFCandGenerator
 from kaggle_otto2.cand_generator.last_inter.cand_generator import LastInterCandGenerator
+from kaggle_otto2.cand_generator.user_mf.cand_generator import UserMFCandGenerator

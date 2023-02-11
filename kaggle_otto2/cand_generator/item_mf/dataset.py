@@ -1,18 +1,25 @@
 import numpy as np
-import pandas as pd
 from torch.utils.data import Dataset
 
+from kaggle_otto2.data_loader import OttoDataLoader
 
-class OttoPairDataset(Dataset):
-    def __init__(self, pair_df: pd.DataFrame, train_df: pd.DataFrame, aid2idx):
+
+class ItemMFDataset(Dataset):
+    def __init__(self, data_loader: OttoDataLoader):
         super().__init__()
-        self.aid_x = pair_df["aid_idx"].tolist()
-        self.aid_y = pair_df["next_aid_idx"].tolist()
-        self.aid_size = train_df.groupby("aid").size()
-        self.aid_size.index = self.aid_size.index.map(aid2idx)
-        self.ts_diff = pair_df["ts_diff"].tolist()
+        pair_df = data_loader.get_pair_df()
+        train_df = data_loader.get_train_df()
+        train_df = train_df.join(data_loader.get_aid_idx_df(), on="aid")
+        aid_vc = train_df["aid_idx"].value_counts()
+        self.aid_size = dict(
+            zip(aid_vc["aid_idx"].to_list(), aid_vc["counts"].to_list())
+        )
+
+        self.aid_x = pair_df["aid_idx"].to_numpy()
+        self.aid_y = pair_df["next_aid_idx"].to_numpy()
+        self.ts_diff = pair_df["ts_diff"].to_numpy()
+
         self.max_ts_diff = 7 * 24 * 60 * 60  # 7 days
-        self.max_aid_size = self.aid_size.max()
 
     def __len__(self):
         return len(self.aid_x)
@@ -27,6 +34,6 @@ class OttoPairDataset(Dataset):
         return {
             "aid_x": aid_x,
             "aid_y": aid_y,
-            "size_x": 1 / size_x / (ts_diff_coef + 1),
-            "size_y": 1 / size_y,
+            "coef_x": 1 / size_x / (ts_diff_coef + 1),
+            "coef_y": 1 / size_y,
         }

@@ -1,3 +1,4 @@
+from kaggle_otto2.util.cv_util import CvUtil
 from kaggle_otto2.util.evaluate_util import EvaluateUtil
 from kaggle_otto2.util.file_util import FileUtil
 from kaggle_otto2.util.global_util import GlobalUtil

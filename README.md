@@ -1,22 +1,39 @@
 # kaggle-otto2
 
-## Setup
+## Code Structure
+- [WIP] コード構成のポンチ絵を作成
+
+## 3 Types of experiment environment
+- [WIP] dev, cv, lbの説明をテーブルで作成
+
+## Procedure
+
+### 000. Setup poetry
 
 ```bash
-./bin/setup.sh
+# Install packages
+poetry install
+
+# Get into virtual env
+poetry shell
 ```
 
-## Run
+### 001. Download datasets
 
 ```bash
-# DEV (CV with sessions 1/20 sampled)
-./bin/run.sh exp001_dev
-
-# CV
-./bin/run.sh exp001_cv
-
-# For Submission
-./bin/run.sh exp001
+# Download datasets
+# ※ ~/kaggle/.kaggle.json with your Kaggle API Key is required
+./bin/001_download.sh
 ```
 
-PYTHONPATH=. python kaggle_otto2/data_loader/main.py --exp exp001_dev
+### 002. Preprocess
+
+```bash
+./bin/002_preprocess.sh exp001_dev
+```
+
+### 003. Candidate Generation
+
+```bash
+./bin/003_preprocess.sh exp001_dev
+```

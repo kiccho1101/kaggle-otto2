@@ -10,7 +10,6 @@
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
-        // "--ignore=W293, W503, W504, E402, F403, E203",
         "--max-line-length=300",
         "--max-complexity=20"
     ],

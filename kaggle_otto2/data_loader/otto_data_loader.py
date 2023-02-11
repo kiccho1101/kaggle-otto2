@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 
 import numpy as np
 import polars as pl
+from tqdm import tqdm
 
 from kaggle_otto2.config import Config
 from kaggle_otto2.util import FileUtil, TimeUtil
@@ -17,6 +18,7 @@ class OttoDataLoader:
     def fit(self):
         self.create_train_test_df()
         self.create_idx_maps()
+        self.create_pair_df()
 
     def create_train_test_df(self):
         with TimeUtil.timer("create train_df, test_df, test_labels"):
@@ -101,8 +103,41 @@ class OttoDataLoader:
             session_idx_df.write_parquet(self.data_dir / "session_idx_df.parquet")
             FileUtil.save_pickle(session2idx, self.data_dir / "session2idx.pkl")
             FileUtil.save_pickle(
-                {k: v for k, v in enumerate(sessions)}, self.data_dir / "idx2aid.pkl"
+                {k: v for k, v in enumerate(sessions)}, self.data_dir / "idx2session.pkl"
             )
+
+    def create_pair_df(self):
+        with TimeUtil.timer("create pair_df"):
+            train_df = self.get_train_df()
+            aid_idx_df = self.get_aid_idx_df()
+            train_df = (
+                train_df.join(aid_idx_df, on="aid")
+                .drop(["aid", "type"])
+                .sort(["session", "ts"], reverse=[False, True])
+            )
+            pair_df = pl.DataFrame()
+            for i in tqdm(range(1, 5)):
+                _pair_df = (
+                    train_df.with_columns(
+                        [
+                            pl.col("aid_idx")
+                            .shift(-i)
+                            .over("session")
+                            .alias("next_aid_idx"),
+                            (
+                                pl.col("ts") - pl.col("ts").shift(-i).over("session")
+                            ).alias("ts_diff"),
+                        ]
+                    )
+                    .filter(pl.col("next_aid_idx").is_not_null())
+                    .select(["aid_idx", "next_aid_idx", "ts_diff"])
+                )
+                pair_df = pl.concat([pair_df, _pair_df])
+
+        print("pair_df:", pair_df.shape)
+
+        with TimeUtil.timer("save pair_df"):
+            pair_df.write_parquet(self.data_dir / "pair_df.parquet")
 
     def sampling(
         self,
@@ -111,7 +146,7 @@ class OttoDataLoader:
         test_df: pl.DataFrame,
         test_labels: pl.DataFrame,
     ) -> Tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame]:
-        sampling_ratio = self.config.yaml.get("sampling_ratio", 0.05)
+        sampling_ratio = self.config.yaml.pp.get("sampling_ratio", 0.05)
         with TimeUtil.timer(f"sampling (ratio: {sampling_ratio})"):
             test_sessions = test_df["session"].unique()
 
@@ -169,6 +204,9 @@ class OttoDataLoader:
 
     def get_idx2session(self) -> Dict[int, int]:
         return FileUtil.load_pickle(self.data_dir / "idx2session.pkl")
+
+    def get_pair_df(self) -> pl.DataFrame:
+        return pl.read_parquet(self.data_dir / "pair_df.parquet")
 
 
 if __name__ == "__main__":

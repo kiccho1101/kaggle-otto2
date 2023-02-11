@@ -20,7 +20,7 @@ class Config:
 
         self.is_dev = "_dev" in self.exp
         self.is_cv = "_cv" in self.exp or "_dev" in self.exp
-        self.is_sub = not self.is_cv and not self.is_dev
+        self.is_sub = "_lb" in self.exp
 
     def _init_yaml(self):
         with initialize_config_dir(

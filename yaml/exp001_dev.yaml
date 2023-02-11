@@ -1,5 +1,35 @@
 seed: 77
-sampling_ratio: 0.05
+
+pp:
+  sampling_ratio: 0.05
+cg:
+  item_mf:
+    n_epochs: 15
+    n_factors: 256
+    lr: 0.1
+    train_batch_size: 262144
+  item_mf_last:
+    gen_cand_topk: 40
+  item_mf_seq:
+    gen_cand_topk: 40
+  user_mf:
+    n_epochs: 100
+    n_factors: 256
+    lr: 0.01
+    train_batch_size: 262144
+    user_min_inters: 20
+    gen_cand_topk: 40
+  item2vec:
+    lr: 0.05
+    window: 5
+    vector_size: 100
+    sg: 1
+    epochs: 5
+    seed: 77
+    negative: 30
+    min_count: 1
+    gen_cand_topk: 20
+    cg_weight: 1.2
 
 catboost_params:
   target_click:

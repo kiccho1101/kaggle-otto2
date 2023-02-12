@@ -50,8 +50,6 @@ class RankerInference:
     def inference(self, features: List[str]):
         n_splits = 3
         for fold in range(n_splits):
-            if fold != 0 and not self.config.is_dev:
-                continue
             with TimeUtil.timer(f"Inference Fold: {fold}/{n_splits-1}"):
                 self.inference_fold(fold, features)
 

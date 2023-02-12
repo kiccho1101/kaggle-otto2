@@ -7,7 +7,7 @@ download_competition() {
 
     mkdir -p input
 
-    # Download foursquare data
+    # Download competition data
     kaggle competitions download -c "$DIR_NAME"
 
     # Unzip
@@ -23,7 +23,7 @@ download_dataset() {
 
     mkdir -p input
 
-    # Download foursquare data
+    # Download dataset data
     kaggle datasets download -d "$DATASET_NAME"
 
     # Unzip
@@ -33,6 +33,6 @@ download_dataset() {
     rm "$DIR_NAME.zip"
 }
 
-# download_competition otto-recommender-system
+download_competition otto-recommender-system
 download_dataset "radek1/otto-full-optimized-memory-footprint" "otto-full-optimized-memory-footprint"
 download_dataset "radek1/otto-train-and-test-data-for-local-validation" "otto-train-and-test-data-for-local-validation"

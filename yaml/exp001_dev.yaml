@@ -30,6 +30,10 @@ cg:
     min_count: 1
     gen_cand_topk: 20
     cg_weight: 1.2
+  item2vec_last:
+    gen_cand_topk: 20
+  item2vec_seq:
+    gen_cand_topk: 20
 ranker:
   features:
   - last_inter_score_selected

@@ -12,7 +12,7 @@ def main(exp: str):
     data_loader = OttoDataLoader(config)
 
     cg = ItemMFCandGenerator(config.dir_config.exp_output_dir, config, data_loader)
-    # cg.fit()
+    cg.fit()
     for seed_type in ["last", "seq"]:
         cg = ItemMFCandGenerator(
             config.dir_config.exp_output_dir, config, data_loader, seed_type

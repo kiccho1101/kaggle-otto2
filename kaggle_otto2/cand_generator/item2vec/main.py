@@ -14,7 +14,7 @@ def main(exp: str):
     cg = Item2VecCandGenerator(
         config.dir_config.exp_output_dir, config, data_loader, "last"
     )
-    # cg.fit()
+    cg.fit()
     for seed_type in ["last", "seq"]:
         cg = Item2VecCandGenerator(
             config.dir_config.exp_output_dir, config, data_loader, seed_type
